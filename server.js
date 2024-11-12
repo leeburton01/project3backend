@@ -28,9 +28,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Middleware //
 app.use(express.json({ limit: "150mb" })); // Set JSON limit to 150MB
 app.use(express.urlencoded({ limit: "150mb", extended: true })); // Set URL-encoded limit to 150MB
-app.use(cors());
 
-// MongoDB //
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    "https://project303.netlify.app", // Deployed frontend URL
+    "http://localhost:5173", // Local development URL
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Allow credentials (e.g., cookies, tokens)
+};
+app.use(cors(corsOptions));
+
+// MongoDB Connection //
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
