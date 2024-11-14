@@ -160,4 +160,32 @@ router.post("/data-deletion", (req, res) => {
   res.status(200).json(response);
 });
 
+// Instagram OAuth callback
+router.get("/instagram/callback", async (req, res) => {
+  const { code } = req.query;
+  if (!code) {
+    return res.status(400).send("Authorization code is missing");
+  }
+
+  try {
+    // Exchange code for an access token (use the Instagram API)
+    const tokenResponse = await axios.post(
+      `https://api.instagram.com/oauth/access_token`,
+      {
+        client_id: process.env.INSTAGRAM_CLIENT_ID,
+        client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
+        grant_type: "authorization_code",
+        redirect_uri: `${process.env.BACKEND_URL}/auth/instagram/callback`,
+        code,
+      }
+    );
+
+    const { access_token, user_id } = tokenResponse.data;
+    res.json({ access_token, user_id });
+  } catch (error) {
+    console.error("Error during Instagram OAuth callback:", error);
+    res.status(500).send("OAuth callback failed");
+  }
+});
+
 module.exports = router;
