@@ -139,4 +139,25 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Deauthorize endpoint
+router.post("/deauthorize", (req, res) => {
+  console.log("Received deauthorization request:", req.body);
+  // Here you can handle the deauthorization logic (e.g., removing user data)
+  res.status(200).send("User deauthorized successfully.");
+});
+
+// Data Deletion Request endpoint
+router.post("/data-deletion", (req, res) => {
+  console.log("Received data deletion request:", req.body);
+
+  // Example response structure (required by Instagram)
+  const response = {
+    url: "https://project303.netlify.app/data-deletion-info",
+    confirmation_code: "user_data_deletion_accepted",
+  };
+
+  // Send the response back to Instagram
+  res.status(200).json(response);
+});
+
 module.exports = router;
