@@ -21,7 +21,20 @@ router.post("/signup", async (req, res) => {
     const newUser = new User({ email, password });
     await newUser.save();
 
-    res.status(201).json({ message: "User created successfully" });
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET || "test_secret_key",
+      { expiresIn: "4h" }
+    );
+
+    console.log("Signup successful, token generated:", token);
+
+    res.status(201).json({
+      message: "User created successfully",
+      token,
+      userId: newUser._id,
+    });
   } catch (error) {
     console.error("Error during signup:", error.message);
     res.status(500).json({ message: "Internal Server Error", error });
